@@ -135,7 +135,7 @@ def run_container_job(run, name_TA, p_start, p_end):
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/DataDecoder/ \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
-    file.write('\cp /srv/' + run + '_beamdb' + '/srv/' + name_TA + '/ \n')
+    file.write('\cp /srv/' + run + '_beamdb /srv/' + name_TA + '/ \n')
     file.write('\n')
 
     file.write('# enter ToolAnalysis directory \n')

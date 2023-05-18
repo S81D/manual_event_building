@@ -82,9 +82,9 @@ for i in range(len(part_list[0])):     # loop over number of jobs
 
     # create the run_container_job and grid_job scripts
     os.system('rm ' + script_path + 'grid_job.sh')
-    submit_jobs.grid_job(user, script_path, TA_tar_name, part_list[0][i], part_list[1][i])
+    submit_jobs.grid_job(run, user, script_path, TA_tar_name, part_list[0][i], part_list[1][i])
     os.system('rm run_container_job.sh')
-    submit_jobs.run_container_job(name_TA, part_list[0][i], part_list[1][i])
+    submit_jobs.run_container_job(run, name_TA, part_list[0][i], part_list[1][i])
 
     # For the DataDecoder TC, we first must produce "my_files.txt", which contains the paths to the raw data files
     # For some reason, when submitting my_files.txt from the input to the worker node, the job could not locate it, aside

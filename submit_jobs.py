@@ -151,7 +151,6 @@ def run_container_job(run, name_TA, p_start, p_end):
     file.write('./Analyse configfiles/DataDecoder/ToolChainConfig  >> /srv/logfile_DataDecoder_${PART_NAME}.txt \n')               # execute DataDecoder TC (eventbuilding)
     file.write('\n')
 
-    file.write('"" >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls -lrth >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls configfiles/DataDecoder/ >> /srv/logfile_${PART_NAME}.txt \n')

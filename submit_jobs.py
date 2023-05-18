@@ -33,7 +33,7 @@ def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, T
 
 
 # this next script is what is ran once it is in the grid
-def grid_job(user, script_path, TA_tar_name, p_start, p_end):
+def grid_job(run, user, script_path, TA_tar_name, p_start, p_end):
 
     file = open(script_path + 'grid_job.sh', "w")
 

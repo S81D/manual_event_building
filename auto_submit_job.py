@@ -67,6 +67,13 @@ if (step_size > (last_part-first_part + 1)):
 # We need to break the batch into seperate jobs. Unless the batch size is evenly divisible by
 # the step size, the last job will be smaller than the other ones.
 
+# Also (recent change) for the PreProcessTrigOverlap ToolChain, the trigoverlap files that are produced
+# may contain trigger data from the part before or after. For instance, if running over p1, the trigoverlap file 
+# for p1 may contain info from p0 and/or p2. To remedy this, we actually copy the raw data files before and after
+# the user input request, producing trig overlap files that cover each side. Since (in this code) the PreProcessTrigOverlap
+# and DataDecoder ToolChain share the same my_files.txt, we will produce two more files than the user requested. We then 
+# have to delete those processed data files after, before copying the "true" processed data back to /scratch.
+
 part_list = [[], []]     # [0] = first,  [1] = final
 for i in range(first_part, last_part + 1, step_size):
     part_list[0].append(i)

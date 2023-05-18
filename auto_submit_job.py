@@ -47,7 +47,7 @@ last_file = all_files[-1]
 final_part = int(last_file.split('p')[-1])
 
 if process_all == True:
-    print('\nThere are ' + str(final_part) + ' part files in this run. Proceeding with job submissions...')
+    print('\nThere are ' + str(final_part+1) + ' part files in this run. Proceeding with job submissions...')
     first_part = int(0)
     last_part = final_part
 

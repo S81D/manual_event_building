@@ -25,7 +25,7 @@ input_path = '/pnfs/annie/scratch/users/doran/'               # path to your gri
 output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output location
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
+print('\n------- Please ensure you have a produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
 run = input('\nRun number:  ')
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')
 
@@ -64,13 +64,6 @@ if (step_size > (last_part-first_part + 1)):
     exit()
 
 
-# create the run_container_job and grid_job scripts
-#os.system('rm ' + script_path + 'grid_job.sh')
-#submit_jobs.grid_job(user, script_path, TA_tar_name)
-#os.system('rm run_container_job.sh')
-#submit_jobs.run_container_job(name_TA)
-
-
 # We need to break the batch into seperate jobs. Unless the batch size is evenly divisible by
 # the step size, the last job will be smaller than the other ones.
 
@@ -94,16 +87,9 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     submit_jobs.run_container_job(name_TA, part_list[0][i], part_list[1][i])
 
     # For the DataDecoder TC, we first must produce "my_files.txt", which contains the paths to the raw data files
-    # it is important for grid submissions that the path be to /srv since it will be executing on a grid node, with no external access to /pnfs
-    # we are not editing the files on the node, so instead we copy this modified file into the TA directory
-
-    #file_txt = open('my_files_' + str(part_list[0][i]) + '_' + str(part_list[1][i]) + '.txt', "w")
-    #for j in range(part_list[0][i], part_list[1][i]+1):
-     #   file_txt.write('/srv/RAWDataR' + run + 'S0p' + str(j) + '\n')
-    #file_txt.close()
-
-    #os.system('rm my_files*.txt')    # remove my_files before the automated submissions
-    #submit_jobs.my_file(run, part_list[0][i], part_list[1][i])
+    # For some reason, when submitting my_files.txt from the input to the worker node, the job could not locate it, aside
+    # from the final job in a batch. Therefore, if you submitted 5 jobs in total, only the last one could find the file. 
+    # To remedy this, we produce my_files.txt on the worker node based on the input RAWData files in /srv.
 
 
     # We can then create the job_submit script that will send our job (with files) to the grid

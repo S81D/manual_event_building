@@ -1,6 +1,6 @@
 import sys
 
-# this file can be called to produce the necessary grid submission scripts
+# this file is called by auto_submit_job.py to produce the necessary grid submission scripts
 
 
 # this script is for actually submitting the job to the FermiGrid
@@ -23,7 +23,6 @@ def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, T
         file.write('-f ${RAWDATA_PATH}/RAWDataR' + run + 'S0p' + str(i) + ' ')
 
     file.write('-f ${INPUT_PATH}/' + run + '_beamdb ')
-    #file.write('-f ${INPUT_PATH}/my_files_' + str(p_start) + '_' + str(p_end) + '.txt ')
     file.write('-f ${INPUT_PATH}/run_container_job.sh ')
     file.write('-f ${INPUT_PATH}/' + TA_tar_name + ' ')
     file.write('-d OUTPUT $OUTPUT_FOLDER ')
@@ -64,7 +63,6 @@ def grid_job(user, script_path, TA_tar_name, p_start, p_end):
 
     file.write('# Copy datafiles \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/RAWData* . \n')
-    #file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/my_files_' + str(p_start) + '_' + str(p_end) + '.txt . \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + TA_tar_name + ' . \n')
     file.write('tar -xzf ' + TA_tar_name + '\n')
     file.write('rm ' + TA_tar_name + '\n')
@@ -132,7 +130,6 @@ def run_container_job(name_TA, p_start, p_end):
 
     file.write('# copy config files \n')
 
-    #file.write('mv /srv/my_files_' + str(p_start) + '_' + str(p_end) + '.txt /srv/my_files.txt \n')    # previous problem with my_files.txt not copying correctly with multiple submissions
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/DataDecoder/ \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
@@ -170,19 +167,6 @@ def run_container_job(name_TA, p_start, p_end):
 
     return
 
-'''
-# create the file that holds the paths to the raw data files, to be used by DataDecoder and PreProcessTrig
-def my_file(run, p_start, p_end):
-
-    file = open('my_files_' + str(p_start) + '_' + str(p_end) + '.txt', "w")
-
-    for i in range(int(p_start), int(p_end)+1):
-        file.write('/srv/RAWDataR' + run + 'S0p' + str(i) + '\n')
-
-    file.close()
-
-    return
-'''
 
 ### done ###
 

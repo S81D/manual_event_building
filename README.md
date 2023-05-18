@@ -1,2 +1,3 @@
 # FermiGrid_Scripts
-job submission scripts for the FermiLab grid
+
+Scripts to submit jobs to the grid. Utilizes James Minock's container-within-a-container solution.

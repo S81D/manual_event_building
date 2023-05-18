@@ -4,7 +4,7 @@ import sys
 
 
 # this script is for actually submitting the job to the FermiGrid
-def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, TA_tar_name):
+def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, TA_tar_name, FF_before, FF_after):
     
     file = open('submit_grid_job.sh', "w")
 
@@ -19,7 +19,7 @@ def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, T
     file.write('\n')
     file.write('jobsub_submit --memory=4000MB --expected-lifetime=${QUEUE} -G annie --disk=30GB --resource-provides=usage_model=OFFSITE --site=Colorado,BNL,Caltech,Nebraska,SU-OG,Wisconsin,UCSD,NotreDame,MIT,Michigan,MWT2,UChicago,Hyak_CE ')
 
-    for i in range(int(p_start), int(p_end)+1):
+    for i in range(int(p_start) - FF_before, int(p_end)+1+FF_after):    # fudge factor to account for trig overlap
         file.write('-f ${RAWDATA_PATH}/RAWDataR' + run + 'S0p' + str(i) + ' ')
 
     file.write('-f ${INPUT_PATH}/' + run + '_beamdb ')
@@ -110,7 +110,7 @@ def grid_job(run, user, script_path, TA_tar_name, p_start, p_end):
 
 
 # third script is the script that actually execuates the ToolChains once in the singularity environment
-def run_container_job(run, name_TA, p_start, p_end):
+def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
 
     file = open('run_container_job.sh', "w")
 
@@ -150,6 +150,18 @@ def run_container_job(run, name_TA, p_start, p_end):
     file.write('./Analyse configfiles/PreProcessTrigOverlap/ToolChainConfig >> /srv/logfile_trig_${PART_NAME}.txt \n')    # produce the trig overlap files
     file.write('./Analyse configfiles/DataDecoder/ToolChainConfig  >> /srv/logfile_DataDecoder_${PART_NAME}.txt \n')               # execute DataDecoder TC (eventbuilding)
     file.write('\n')
+    
+    # after producing the processed data files, we need to remove the "fudge factor" files for files that are not the first or last parts of a run
+    if FF_before == 1:
+        file.write('\n')
+        file.write('rm ProcessedRawData_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_start - 1) + ' \n')
+        file.write('rm OrphanStore_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_start - 1) + ' \n')
+        file.write('\n')
+    if FF_after == 1:
+        file.write('\n')
+        file.write('rm ProcessedRawData_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_end + 1) + ' \n')
+        file.write('rm OrphanStore_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_end + 1) + ' \n')
+        file.write('\n')
 
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls -lrth >> /srv/logfile_${PART_NAME}.txt \n')

@@ -64,6 +64,7 @@ def grid_job(user, script_path, TA_tar_name, p_start, p_end):
     file.write('# Copy datafiles \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/RAWData* . \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + TA_tar_name + ' . \n')
+    file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + run + '_beamdb . \n') 
     file.write('tar -xzf ' + TA_tar_name + '\n')
     file.write('rm ' + TA_tar_name + '\n')
     file.write('\n')
@@ -99,6 +100,7 @@ def grid_job(user, script_path, TA_tar_name, p_start, p_end):
     file.write('ls -v /srv >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('rm /srv/RAWData* \n')
     file.write('rm /srv/my_files.txt \n')
+    file.write('rm /srv/' + run + '_beamdb \n')
     file.write('rm -rf ' + TA_tar_name + '/ \n')
     file.write('### END ###')
 
@@ -108,7 +110,7 @@ def grid_job(user, script_path, TA_tar_name, p_start, p_end):
 
 
 # third script is the script that actually execuates the ToolChains once in the singularity environment
-def run_container_job(name_TA, p_start, p_end):
+def run_container_job(run, name_TA, p_start, p_end):
 
     file = open('run_container_job.sh', "w")
 
@@ -133,7 +135,7 @@ def run_container_job(name_TA, p_start, p_end):
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/DataDecoder/ \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
-    file.write('\cp /srv/4201_beamdb /srv/' + name_TA + '/ \n')
+    file.write('\cp /srv/' + run + '_beamdb' + '/srv/' + name_TA + '/ \n')
     file.write('\n')
 
     file.write('# enter ToolAnalysis directory \n')

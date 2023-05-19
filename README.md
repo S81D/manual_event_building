@@ -10,6 +10,8 @@ The only pre-requirement is to run the ```BeamFetcher``` ToolChain in ToolAnalys
 
 In addition, some ToolChains are sensitive to Daylight Savings, so ensure those files within your ToolAnalysis tar-ball are properly adjusted. 
 
+```find_filesizes.py``` is useful for checking to see if the event building produced all of the part files. It's tedious to go through and find discrepencies when there are 100's of part files. It will also output the avg, min, and max filesizes of the raw data (useful for the logbook). To run it, simply specify the run number: ```python3 find_filesizes.py <RUN_NUMBER>```.
+
 ** To Do: 
 - Integrate Andrew's new BeamFetcher tool into event building
 - Automated BeamFetcher TC, instead of needing to run it prior to run submission

@@ -147,6 +147,7 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/DataDecoder/ \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
     file.write('\cp /srv/BeamFetcherConfig /srv/' + name_TA + '/configfiles/BeamFetcher/ \n')
+    file.write('\cp /srv/ANNIE_RunInformation_PSQL.txt /srv/' + name_TA + '/ \n')
     file.write('\n')
 
     file.write('# enter ToolAnalysis directory \n')

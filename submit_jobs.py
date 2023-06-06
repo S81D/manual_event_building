@@ -4,11 +4,10 @@ import sys
 
 
 # this script is for actually submitting the job to the FermiGrid
-def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, TA_tar_name, FF_before, FF_after):
+def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name, FF_before, FF_after):
     
     file = open('submit_grid_job.sh', "w")
 
-    file.write('export SCRIPT_PATH=' + script_path + '\n')
     file.write('export INPUT_PATH=' + input_path +  '\n')
     file.write('export RAWDATA_PATH=/pnfs/annie/persistent/raw/raw/' + run + '/ \n')
     file.write('\n')
@@ -26,16 +25,16 @@ def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, T
     file.write('-f ${INPUT_PATH}/run_container_job.sh ')
     file.write('-f ${INPUT_PATH}/' + TA_tar_name + ' ')
     file.write('-d OUTPUT $OUTPUT_FOLDER ')
-    file.write('file://${SCRIPT_PATH}/grid_job.sh ' + str(p_start) + '_' + str(p_end) + '\n')
+    file.write('file://${INPUT_PATH}/grid_job.sh ' + str(p_start) + '_' + str(p_end) + '\n')
     file.close()
 
     return
 
 
 # this next script is what is ran once it is in the grid
-def grid_job(run, user, script_path, TA_tar_name, p_start, p_end):
+def grid_job(run, user, input_path, TA_tar_name, p_start, p_end):
 
-    file = open(script_path + 'grid_job.sh', "w")
+    file = open(input_path + 'grid_job.sh', "w")
 
     file.write('#!/bin/bash \n')
     file.write('# From James Minock \n')

@@ -22,7 +22,7 @@ def submit_grid_job(run, p_start, p_end, script_path, input_path, output_path, T
     for i in range(int(p_start) - FF_before, int(p_end)+1+FF_after):    # fudge factor to account for trig overlap
         file.write('-f ${RAWDATA_PATH}/RAWDataR' + run + 'S0p' + str(i) + ' ')
 
-    file.write('-f ${INPUT_PATH}/' + run + '_beamdb ')
+    file.write('-f ${INPUT_PATH}/ANNIE_RunInformation_PSQL.txt ')
     file.write('-f ${INPUT_PATH}/run_container_job.sh ')
     file.write('-f ${INPUT_PATH}/' + TA_tar_name + ' ')
     file.write('-d OUTPUT $OUTPUT_FOLDER ')
@@ -64,7 +64,7 @@ def grid_job(run, user, script_path, TA_tar_name, p_start, p_end):
     file.write('# Copy datafiles \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/RAWData* . \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + TA_tar_name + ' . \n')
-    file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + run + '_beamdb . \n') 
+    file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/ANNIE_RunInformation_PSQL.txt . \n') 
     file.write('tar -xzf ' + TA_tar_name + '\n')
     file.write('rm ' + TA_tar_name + '\n')
     file.write('\n')
@@ -73,6 +73,17 @@ def grid_job(run, user, script_path, TA_tar_name, p_start, p_end):
     file.write('ls -v /srv/RAWData* >> my_files.txt \n')
     #file.write('cat my_files_' + str(p_start) + '_' + str(p_end) + '.txt >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('echo "" >> ${DUMMY_OUTPUT_FILE} \n')
+    file.write('\n')
+    
+    # create BeamFetcher config file
+    file.write('echo "# BeamFetcher config file" >> BeamFetcherConfig \n')
+    file.write('echo "verbose 5" >> BeamFetcherConfig \n')
+    file.write('echo "OutputFile ./' + run + '_beamdb" >> BeamFetcherConfig \n')
+    file.write('echo "TimestampMode DB        #Options: MSEC / LOCALDATE / DB" >> BeamFetcherConfig \n')
+    file.write('echo "RunNumber ' + run + '" >> BeamFetcherConfig \n')
+    file.write('echo "StartDate ./configfiles/BeamFetcher/my_start_date.txt" >> BeamFetcherConfig \n')
+    file.write('echo "EndDate ./configfiles/BeamFetcher/my_end_date.txt" >> BeamFetcherConfig \n')
+    file.write('echo "TimeChunkStepInMilliseconds       7200000 # two hours" >> BeamFetcherConfig \n')
     file.write('\n')
 
     file.write('# Setup singularity container \n')
@@ -100,7 +111,7 @@ def grid_job(run, user, script_path, TA_tar_name, p_start, p_end):
     file.write('ls -v /srv >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('rm /srv/RAWData* \n')
     file.write('rm /srv/my_files.txt \n')
-    file.write('rm /srv/' + run + '_beamdb \n')
+    file.write('rm /srv/ANNIE_RunInformation_PSQL.txt \n')
     file.write('rm -rf ' + TA_tar_name + '/ \n')
     file.write('### END ###')
 
@@ -135,7 +146,7 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/DataDecoder/ \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
-    file.write('\cp /srv/' + run + '_beamdb /srv/' + name_TA + '/ \n')
+    file.write('\cp /srv/BeamFetcherConfig /srv/' + name_TA + '/configfiles/BeamFetcher/ \n')
     file.write('\n')
 
     file.write('# enter ToolAnalysis directory \n')
@@ -148,6 +159,7 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
 
     file.write('# Run the toolchain \n')
     file.write('./Analyse configfiles/PreProcessTrigOverlap/ToolChainConfig >> /srv/logfile_trig_${PART_NAME}.txt \n')    # produce the trig overlap files
+    file.write('./Analyse configfiles/BeamFetcher/ToolChainConfig  >> /srv/logfile_BeamFetcher_${PART_NAME}.txt \n')               # produce beamdb file
     file.write('./Analyse configfiles/DataDecoder/ToolChainConfig  >> /srv/logfile_DataDecoder_${PART_NAME}.txt \n')               # execute DataDecoder TC (eventbuilding)
     file.write('\n')
     

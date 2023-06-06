@@ -20,8 +20,7 @@ name_TA = 'MyToolAnalysis_5_15_23'                            # name of the TA d
 
 user = 'doran'                                                # annie username
 
-script_path = '/annie/app/users/doran/container_inception/'   # path to your local /annie/app/users dir (where grid_job.sh is)
-input_path = '/pnfs/annie/scratch/users/doran/'               # path to your grid input location (submit_job_grid.sh, run_container_job.sh, and necessary submission files)
+input_path = '/pnfs/annie/scratch/users/doran/'               # path to your grid input location (submit_job_grid.sh, run_container_job.sh, grid_job.sh and necessary submission files)
 output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output location
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -104,8 +103,8 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     # grid_job doesn't need the fudge_factor information, the other two do
     
     # create the run_container_job and grid_job scripts
-    os.system('rm ' + script_path + 'grid_job.sh')
-    submit_jobs.grid_job(run, user, script_path, TA_tar_name, part_list[0][i], part_list[1][i])
+    os.system('rm ' + input_path + 'grid_job.sh')
+    submit_jobs.grid_job(run, user, input_path, TA_tar_name, part_list[0][i], part_list[1][i])
     os.system('rm run_container_job.sh')
     submit_jobs.run_container_job(run, name_TA, part_list[0][i], part_list[1][i], fudge_factor[0][i], fudge_factor[1][i])
 
@@ -118,7 +117,7 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     # We can then create the job_submit script that will send our job (with files) to the grid
 
     os.system('rm submit_grid_job.sh')
-    submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], script_path, input_path, output_path, TA_tar_name, fudge_factor[0][i], fudge_factor[1][i])
+    submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name, fudge_factor[0][i], fudge_factor[1][i])
 
 
     # Lastly, we can execute the job submission script and send the job to the grid

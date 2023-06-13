@@ -24,7 +24,7 @@ input_path = '/pnfs/annie/scratch/users/doran/'               # path to your gri
 output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output location
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-print('\n------- Please ensure the ANNIE_RunInformation_PSQL.txt is updated and present in your input directory prior to job submission -------\n')
+print('\n------- Please ensure you have a produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
 print("\n************************************************ Don't forget about Daylight Savings!! ************************************************\n')
 run = input('\nRun number:  ')
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')

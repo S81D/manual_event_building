@@ -25,7 +25,7 @@ output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output loca
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 print('\n------- Please ensure you have a produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
-print("\n************************************************ Don't forget about Daylight Savings!! ************************************************\n')
+print("\n*********************** Don't forget about Daylight Savings!! **************************\n")
 run = input('\nRun number:  ')
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')
 

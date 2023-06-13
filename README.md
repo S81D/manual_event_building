@@ -20,3 +20,5 @@ In addition, some ToolChains are sensitive to Daylight Savings, so ensure those 
 - Integrate Andrew's new BeamFetcher tool into event building
 - Automated Daylight Savings change to configuration files in MRD-related tools
 - Add finalized Data Processing ToolChain, once it is complete
+- Automatically copy output Processed and Orphan files to /persistent
+- Automatically grab "approved" offsite locations for grid job submissions.

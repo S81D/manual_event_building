@@ -86,12 +86,12 @@ for i in range(first_part, last_part + 1, step_size):
     else:
         part_list[1].append(i+step_size-1)
     
-    if first_part == 0:                  # if the first part is 0, no fudge factor needed before
+    if i == 0:                  # if the first part is 0, no fudge factor needed before
         fudge_factor[0].append(0)
     else:
         fudge_factor[0].append(1)
         
-    if last_part == final_part:          # if the last part of the job is the last part file in the run, no fudge factor needed after
+    if i == final_part:          # if the last part of the job is the last part file in the run, no fudge factor needed after
         fudge_factor[1].append(0)
     else:
         fudge_factor[1].append(1)

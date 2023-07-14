@@ -24,7 +24,7 @@ input_path = '/pnfs/annie/scratch/users/doran/'               # path to your gri
 output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output location
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-print('\n------- Please ensure you have a produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
+print('\n------- Please ensure you have produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
 print("\n*********************** Don't forget about Daylight Savings!! **************************\n")
 run = input('\nRun number:  ')
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')
@@ -86,12 +86,12 @@ for i in range(first_part, last_part + 1, step_size):
     else:
         part_list[1].append(i+step_size-1)
     
-    if i == 0:                  # if the first part is 0, no fudge factor needed before
+    if i == 0:                           # if the first part is 0, no fudge factor needed before
         fudge_factor[0].append(0)
     else:
         fudge_factor[0].append(1)
         
-    if i == final_part:          # if the last part of the job is the last part file in the run, no fudge factor needed after
+    if part_list[1][-1] == final_part:   # if the last part of the job is the last part file in the run, no fudge factor needed after
         fudge_factor[1].append(0)
     else:
         fudge_factor[1].append(1)

@@ -32,7 +32,7 @@ def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name, F
 
 
 # this next script is what is ran once it is in the grid
-def grid_job(run, user, input_path, TA_tar_name, p_start, p_end):
+def grid_job(run, user, input_path, TA_tar_name, name_TA, p_start, p_end):
 
     file = open(input_path + 'grid_job.sh', "w")
 
@@ -100,7 +100,7 @@ def grid_job(run, user, input_path, TA_tar_name, p_start, p_end):
     file.write('rm /srv/RAWData* \n')
     file.write('rm /srv/my_files.txt \n')
     file.write('rm /srv/' + run + '_beamdb \n')
-    file.write('rm -rf ' + TA_tar_name + '/ \n')
+    file.write('rm -rf ' + name_TA + '/ \n')
     file.write('### END ###')
 
     file.close()

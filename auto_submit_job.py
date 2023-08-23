@@ -105,7 +105,7 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     
     # create the run_container_job and grid_job scripts
     os.system('rm ' + input_path + 'grid_job.sh')
-    submit_jobs.grid_job(run, user, input_path, TA_tar_name, part_list[0][i], part_list[1][i])
+    submit_jobs.grid_job(run, user, input_path, TA_tar_name, name_TA, part_list[0][i], part_list[1][i])
     os.system('rm run_container_job.sh')
     submit_jobs.run_container_job(run, name_TA, part_list[0][i], part_list[1][i], fudge_factor[0][i], fudge_factor[1][i])
 

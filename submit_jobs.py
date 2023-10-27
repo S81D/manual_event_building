@@ -132,7 +132,7 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
     file.write('# copy config files \n')
 
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
-    file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/DataDecoder/ \n')
+    file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/EventBuilder/ \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
     file.write('\cp /srv/' + run + '_beamdb /srv/' + name_TA + '/ \n')
     
@@ -148,7 +148,7 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
 
     file.write('# Run the toolchain \n')
     file.write('./Analyse configfiles/PreProcessTrigOverlap/ToolChainConfig >> /srv/logfile_trig_${PART_NAME}.txt \n')    # produce the trig overlap files
-    file.write('./Analyse configfiles/DataDecoder/ToolChainConfig  >> /srv/logfile_DataDecoder_${PART_NAME}.txt \n')      # execute DataDecoder TC (eventbuilding)
+    file.write('./Analyse configfiles/EventBuilder/ToolChainConfig  >> /srv/logfile_EventBuilder_${PART_NAME}.txt \n')      # execute Event Building TC
     file.write('\n')
     
     # after producing the processed data files, we need to remove the "fudge factor" files for files that are not the first or last parts of a run
@@ -165,7 +165,7 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
 
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls -lrth >> /srv/logfile_${PART_NAME}.txt \n')
-    file.write('ls configfiles/DataDecoder/ >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('ls configfiles/EventBuilder/ >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\n')
 
     file.write('# copy any produced files \n')

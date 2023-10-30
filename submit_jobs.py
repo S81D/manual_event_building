@@ -129,11 +129,20 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
 
     # modify if needed, depending on the TC you are running
 
-    file.write('# copy config files \n')
+    file.write('# copy files \n')
+    
+    # Copy overlap rawdata and the associated paths to the PreProcess TC
+    file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
 
+    # Copy [omit -1, RawData, omit +1] files to EventBuilder TC
+    if FF_before == 1:
+        file.write('tail -n +2 /srv/my_files.txt > my_files.tmp && mv my_files.tmp my_files.txt')
+    if FF_after == 1:
+        file.write('head -n -1 /srv/my_files.txt > my_files.tmp && mv my_files.tmp my_files.txt')
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/EventBuilder/ \n')
-    file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
     file.write('\cp /srv/' + run + '_beamdb /srv/' + name_TA + '/ \n')
     
     file.write('\n')
@@ -151,18 +160,6 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
     file.write('./Analyse configfiles/EventBuilder/ToolChainConfig  >> /srv/logfile_EventBuilder_${PART_NAME}.txt \n')      # execute Event Building TC
     file.write('\n')
     
-    # after producing the processed data files, we need to remove the "fudge factor" files for files that are not the first or last parts of a run
-    if FF_before == 1:
-        file.write('\n')
-        file.write('rm ProcessedRawData_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_start - 1) + ' \n')
-        file.write('rm OrphanStore_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_start - 1) + ' \n')
-        file.write('\n')
-    if FF_after == 1:
-        file.write('\n')
-        file.write('rm ProcessedRawData_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_end + 1) + ' \n')
-        file.write('rm OrphanStore_TankAndMRDAndCTC_R' + run + 'S0p' + str(p_end + 1) + ' \n')
-        file.write('\n')
-
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls -lrth >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls configfiles/EventBuilder/ >> /srv/logfile_${PART_NAME}.txt \n')

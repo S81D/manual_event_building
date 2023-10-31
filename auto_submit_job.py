@@ -16,7 +16,7 @@ import submit_jobs     # other py script for generating the job submission scrip
 # Modify:
 
 TA_tar_name = 'MyToolAnalysis_grid.tar.gz'                    # name of toolanalysis tar-ball
-name_TA = 'MyToolAnalysis_5_15_23'                            # name of the TA directory (within tar-ball)
+name_TA = 'MyFork_DD'                                         # name of the TA directory (within tar-ball)
 
 user = 'doran'                                                # annie username
 

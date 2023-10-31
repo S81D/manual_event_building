@@ -138,9 +138,9 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
 
     # Copy [omit -1, RawData, omit +1] files to EventBuilder TC
     if FF_before == 1:
-        file.write('tail -n +2 /srv/my_files.txt > my_files.tmp && mv my_files.tmp my_files.txt \n')
+        file.write('tail -n +2 /srv/my_files.txt > /srv/my_files.tmp && mv /srv/my_files.tmp /srv/my_files.txt \n')
     if FF_after == 1:
-        file.write("sed -i '$d' my_files.txt \n")
+        file.write("sed -i '$d' /srv/my_files.txt \n")
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/EventBuilder/ \n')
     file.write('\cp /srv/' + run + '_beamdb /srv/' + name_TA + '/ \n')

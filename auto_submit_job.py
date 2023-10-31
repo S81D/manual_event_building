@@ -25,6 +25,7 @@ output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output loca
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 print('\n------- Please ensure you have produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
+print('\n------------------ and that the user name and the TA directory name are accurate -----------------')
 print("\n*********************** Don't forget about Daylight Savings!! **************************\n")
 run = input('\nRun number:  ')
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')
@@ -46,8 +47,9 @@ all_files.sort(key=lambda file: int(file.split('p')[-1]))
 last_file = all_files[-1]
 final_part = int(last_file.split('p')[-1])
 
+print('\nThere are ' + str(final_part+1) + ' part files in this run. Proceeding with job submissions...')
+
 if process_all == True:
-    print('\nThere are ' + str(final_part+1) + ' part files in this run. Proceeding with job submissions...')
     first_part = int(0)
     last_part = final_part
 

@@ -33,7 +33,7 @@ run = input('\nRun number:  ')
 # check if overlap tar file exits
 exists = os.path.isfile('/pnfs/annie/persistent/processed/trigoverlap/R' + run + '_TrigOverlap.tar.gz')
 if exists == False:
-    print('No TrigOverlap tar file exists for run ' + run + ' in /pnfs/annie/persistent/processed/trigoverlap/ --- please process TrigOverlap files before submitting the jobs!')
+    print('\nNo TrigOverlap tar file exists for run ' + run + ' in /pnfs/annie/persistent/processed/trigoverlap/ --- please process TrigOverlap files before submitting the jobs!\n')
     exit()
 
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')

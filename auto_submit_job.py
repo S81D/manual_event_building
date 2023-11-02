@@ -69,17 +69,6 @@ if (step_size > (last_part-first_part + 1)):
 # We need to break the batch into seperate jobs. Unless the batch size is evenly divisible by
 # the step size, the last job will be smaller than the other ones.
 
-# Also (recent change) for the PreProcessTrigOverlap ToolChain, the trigoverlap files that are produced
-# may contain trigger data from the part before or after. For instance, if running over p1, the trigoverlap file 
-# for p1 may contain info from p0 and/or p2. To remedy this, we actually copy the raw data files before and after
-# the user input request, producing trig overlap files that cover each side. Since (in this code) the PreProcessTrigOverlap
-# and DataDecoder ToolChain share the same my_files.txt, we will produce two more files than the user requested. We then 
-# have to delete those processed data files after, before copying the "true" processed data back to /scratch.
-
-
-# this isn't trivial since we could be processing p0 or the final part file
-fudge_factor = [[], []]  # [0] = whether to include file before first part, [1] = whether to include one after
-
 part_list = [[], []]     # [0] = first,  [1] = final
 for i in range(first_part, last_part + 1, step_size):
     part_list[0].append(i)
@@ -87,16 +76,6 @@ for i in range(first_part, last_part + 1, step_size):
         part_list[1].append(last_part)
     else:
         part_list[1].append(i+step_size-1)
-    
-    if i == 0:                           # if the first part is 0, no fudge factor needed before
-        fudge_factor[0].append(0)
-    else:
-        fudge_factor[0].append(1)
-        
-    if part_list[1][-1] == final_part:   # if the last part of the job is the last part file in the run, no fudge factor needed after
-        fudge_factor[1].append(0)
-    else:
-        fudge_factor[1].append(1)
 
 
 # Submit the entire batch through multiple jobs, based on the user input (above)
@@ -107,9 +86,9 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     
     # create the run_container_job and grid_job scripts
     os.system('rm ' + input_path + 'grid_job.sh')
-    submit_jobs.grid_job(run, user, input_path, TA_tar_name, name_TA, part_list[0][i], part_list[1][i])
+    submit_jobs.grid_job(run, user, input_path, TA_tar_name, name_TA)
     os.system('rm run_container_job.sh')
-    submit_jobs.run_container_job(run, name_TA, part_list[0][i], part_list[1][i], fudge_factor[0][i], fudge_factor[1][i])
+    submit_jobs.run_container_job(run, name_TA)
 
     # For the DataDecoder TC, we first must produce "my_files.txt", which contains the paths to the raw data files
     # For some reason, when submitting my_files.txt from the input to the worker node, the job could not locate it, aside
@@ -120,7 +99,7 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     # We can then create the job_submit script that will send our job (with files) to the grid
 
     os.system('rm submit_grid_job.sh')
-    submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name, fudge_factor[0][i], fudge_factor[1][i])
+    submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name)
 
 
     # Lastly, we can execute the job submission script and send the job to the grid

@@ -65,6 +65,7 @@ def grid_job(run, user, input_path, TA_tar_name, name_TA):
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/RAWData* . \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + TA_tar_name + ' . \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + run + '_beamdb . \n') 
+    file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/R' + run + '_TrigOverlap.tar.gz . \n')
     file.write('tar -xzf ' + TA_tar_name + '\n')
     file.write('tar -xzf R' + run + '_TrigOverlap.tar.gz \n')
     file.write('rm ' + TA_tar_name + '\n')

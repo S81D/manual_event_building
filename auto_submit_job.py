@@ -79,7 +79,12 @@ if (step_size > (last_part-first_part + 1)):
 
 part_list = [[], []]     # [0] = first,  [1] = final
 for i in range(first_part, last_part + 1, step_size):
-    part_list[0].append(i)
+    # to account for the trigoverlap issue (last part file is sometimes a .data format)
+    if process_all == True and i != 0:
+        part_list[0].append(i-1)
+    else:
+        part_list[0].append(i)
+        
     if ((i+step_size-1) > last_part):    # the last job (will be smaller than the others)
         part_list[1].append(last_part)
     else:

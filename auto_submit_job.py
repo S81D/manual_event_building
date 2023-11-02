@@ -27,7 +27,15 @@ output_path = '/pnfs/annie/scratch/users/doran/output/'       # grid output loca
 print('\n------- Please ensure you have produced a <RUN_NUMBER>_beamdb file prior to job submission -------')
 print('\n------------------ and that the user name and the TA directory name are accurate -----------------')
 print("\n*********************** Don't forget about Daylight Savings!! **************************\n")
+
 run = input('\nRun number:  ')
+
+# check if overlap tar file exits
+exists = os.path.isfile('/pnfs/annie/persistent/processed/trigoverlap/R' + run + '_TrigOverlap.tar.gz')
+if exists == False:
+    print('No TrigOverlap tar file exists for run ' + run + ' in /pnfs/annie/persistent/processed/trigoverlap/ --- please process TrigOverlap files before submitting the jobs!')
+    exit()
+
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')
 
 if process_all == 'y':

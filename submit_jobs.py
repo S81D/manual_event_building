@@ -4,7 +4,7 @@ import sys
 
 
 # this script is for actually submitting the job to the FermiGrid
-def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name, FF_before, FF_after):
+def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name):
     
     file = open('submit_grid_job.sh', "w")
 
@@ -18,12 +18,13 @@ def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name, F
     file.write('\n')
     file.write('jobsub_submit --memory=8000MB --expected-lifetime=${QUEUE} -G annie --disk=50GB --resource-provides=usage_model=OFFSITE --site=Colorado,BNL,Caltech,Nebraska,SU-OG,UCSD,NotreDame,MIT,Michigan,MWT2,UChicago,Hyak_CE ')
 
-    for i in range(int(p_start) - FF_before, int(p_end)+1+FF_after):    # fudge factor to account for trig overlap
+    for i in range(int(p_start), int(p_end)+1):
         file.write('-f ${RAWDATA_PATH}/RAWDataR' + run + 'S0p' + str(i) + ' ')
 
     file.write('-f ${INPUT_PATH}/' + run + '_beamdb ')
     file.write('-f ${INPUT_PATH}/run_container_job.sh ')
     file.write('-f ${INPUT_PATH}/' + TA_tar_name + ' ')
+    file.write('-f /pnfs/annie/persistent/processed/trigoverlap/R' + run + '_TrigOverlap.tar.gz ')
     file.write('-d OUTPUT $OUTPUT_FOLDER ')
     file.write('file://${INPUT_PATH}/grid_job.sh ' + str(p_start) + '_' + str(p_end) + '\n')
     file.close()
@@ -32,7 +33,7 @@ def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name, F
 
 
 # this next script is what is ran once it is in the grid
-def grid_job(run, user, input_path, TA_tar_name, name_TA, p_start, p_end):
+def grid_job(run, user, input_path, TA_tar_name, name_TA):
 
     file = open(input_path + 'grid_job.sh', "w")
 
@@ -65,12 +66,17 @@ def grid_job(run, user, input_path, TA_tar_name, name_TA, p_start, p_end):
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + TA_tar_name + ' . \n')
     file.write('${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/' + run + '_beamdb . \n') 
     file.write('tar -xzf ' + TA_tar_name + '\n')
+    file.write('tar -xzf R' + run + '_TrigOverlap.tar.gz \n')
     file.write('rm ' + TA_tar_name + '\n')
+    file.write('rm R' + run + '_TrigOverlap.tar.gz\n')
+    
     file.write('\n')
 
     file.write('echo "Raw data files in my_files.txt:" >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('ls -v /srv/RAWData* >> my_files.txt \n')
-    #file.write('cat my_files_' + str(p_start) + '_' + str(p_end) + '.txt >> ${DUMMY_OUTPUT_FILE} \n')
+    file.write('echo "" >> ${DUMMY_OUTPUT_FILE} \n')
+    file.write('echo "Trig overlap files present:" >> ${DUMMY_OUTPUT_FILE} \n')
+    file.write('ls -v /srv/Trig* >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('echo "" >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('\n')
 
@@ -101,6 +107,11 @@ def grid_job(run, user, input_path, TA_tar_name, name_TA, p_start, p_end):
     file.write('rm /srv/my_files.txt \n')
     file.write('rm /srv/' + run + '_beamdb \n')
     file.write('rm -rf ' + name_TA + '/ \n')
+    file.write('rm /srv/Trig* \n')
+    file.write('echo "Any remaining contents?" >> ${DUMMY_OUTPUT_FILE} \n')
+    file.write('ls -v /srv >> ${DUMMY_OUTPUT_FILE} \n')
+    file.write('echo "" >> ${DUMMY_OUTPUT_FILE} \n')
+    
     file.write('### END ###')
 
     file.close()
@@ -124,31 +135,41 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
     file.write('touch /srv/logfile_${PART_NAME}.txt \n')
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls -v >>/srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
     file.write('\n')
 
 
     # modify if needed, depending on the TC you are running
 
     file.write('# copy files \n')
-    
-    # Copy overlap rawdata and the associated paths to the PreProcess TC
+
+    file.write('echo "contents of my_files:" >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
-    file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/PreProcessTrigOverlap/ \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
 
-    # Copy [omit -1, RawData, omit +1] files to EventBuilder TC
-    if FF_before == 1:
-        file.write('tail -n +2 /srv/my_files.txt > /srv/my_files.tmp && mv /srv/my_files.tmp /srv/my_files.txt \n')
-    if FF_after == 1:
-        file.write("sed -i '$d' /srv/my_files.txt \n")
-    file.write('cat /srv/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/my_files.txt /srv/' + name_TA + '/configfiles/EventBuilder/ \n')
+    file.write('echo "contents of my_files in the toolchain:" >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('cat /srv/' + name_TA + '/configfiles/EventBuilder/my_files.txt >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
     file.write('\cp /srv/' + run + '_beamdb /srv/' + name_TA + '/ \n')
+    file.write('\cp /srv/Trig* /srv/' + name_TA + '/ \n')
+    file.write('echo "ToolAnalysis directory contents:" >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('ls -v /srv/' + name_TA + '/ >>/srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
+    
     
     file.write('\n')
 
     file.write('# enter ToolAnalysis directory \n')
     file.write('cd ' + name_TA + '/ \n')
+    file.write('echo "Are we now in the ToolAnalysis directory?" >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "Toolchain folder contents:" >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('ls configfiles/EventBuilder/ >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
+    
     file.write('\n')
 
     file.write('# set up paths and libraries \n')
@@ -156,14 +177,16 @@ def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
     file.write('\n')
 
     file.write('# Run the toolchain \n')
-    file.write('./Analyse configfiles/PreProcessTrigOverlap/ToolChainConfig >> /srv/logfile_trig_${PART_NAME}.txt \n')    # produce the trig overlap files
     file.write('./Analyse configfiles/EventBuilder/ToolChainConfig  >> /srv/logfile_EventBuilder_${PART_NAME}.txt \n')      # execute Event Building TC
     file.write('\n')
     
     file.write('pwd >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "Contents of TA after toolchain:" >> /srv/logfile_${PART_NAME}.txt \n')
     file.write('ls -lrth >> /srv/logfile_${PART_NAME}.txt \n')
-    file.write('ls configfiles/EventBuilder/ >> /srv/logfile_${PART_NAME}.txt \n')
+    file.write('echo "" >>/srv/logfile_${PART_NAME}.txt \n')
     file.write('\n')
+    file.write('echo "Copying output files... ending script..." >> /srv/logfile_${PART_NAME}.txt \n')
 
     file.write('# copy any produced files \n')
     file.write('cp Orphan* /srv/ \n')

@@ -120,7 +120,7 @@ def grid_job(run, user, input_path, TA_tar_name, name_TA):
 
 
 # third script is the script that actually execuates the ToolChains once in the singularity environment
-def run_container_job(run, name_TA, p_start, p_end, FF_before, FF_after):
+def run_container_job(run, name_TA):
 
     file = open('run_container_job.sh', "w")
 

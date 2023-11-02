@@ -105,7 +105,7 @@ def grid_job(run, user, input_path, TA_tar_name, name_TA):
     file.write('ls -v /srv >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('rm /srv/RAWData* \n')
     file.write('rm /srv/my_files.txt \n')
-    #file.write('rm /srv/' + run + '_beamdb \n')
+    file.write('rm /srv/' + run + '_beamdb \n')    # typically this won't be here - but some of the tar folders for the overlap files contain a beamdb file as well
     file.write('rm -rf ' + name_TA + '/ \n')
     file.write('rm /srv/Trig* \n')
     file.write('rm /srv/Orphan* /srv/Processed* \n')

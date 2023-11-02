@@ -40,6 +40,9 @@ process_all = input('\nWould you like to submit the entire run? (y/n)   ')
 
 if process_all == 'y':
     process_all = True
+    print("\n***Note: In selecting the entire run, the part files will overlap between job submissions to account for TrigOverlap issue***\n\
+    --> For example if you specify 3 part files per job, the job submissions will be 0-2, 2-5, 5-8, etc... instead of 0-2, 3-5, 6-8, etc...\n\
+    (Just a heads up - it's part of the script, just be mindful that your jobs will contain +1 file more than you specify in the next input)\n")
 elif process_all == 'n':
     process_all = False
 else:

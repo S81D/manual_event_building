@@ -73,7 +73,6 @@ def grid_job(run, user, input_path, TA_tar_name, name_TA):
     
     file.write('\n')
 
-    file.write('echo "Raw data files in my_files.txt:" >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('ls -v /srv/RAWData* >> my_files.txt \n')
     file.write('echo "" >> ${DUMMY_OUTPUT_FILE} \n')
     file.write('echo "Trig overlap files present:" >> ${DUMMY_OUTPUT_FILE} \n')

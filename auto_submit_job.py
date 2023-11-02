@@ -85,12 +85,13 @@ for i in range(first_part, last_part + 1, step_size):
     else:
         part_list[1].append(i+step_size-1)
 
+# calculate disk space requirements
+import math
+disk_space = str(math.ceil(1 + 2.5 + .15*step_size + .025*step_size))
 
 # Submit the entire batch through multiple jobs, based on the user input (above)
 
 for i in range(len(part_list[0])):     # loop over number of jobs
-
-    # grid_job doesn't need the fudge_factor information, the other two do
     
     # create the run_container_job and grid_job scripts
     os.system('rm ' + input_path + 'grid_job.sh')
@@ -107,7 +108,7 @@ for i in range(len(part_list[0])):     # loop over number of jobs
     # We can then create the job_submit script that will send our job (with files) to the grid
 
     os.system('rm submit_grid_job.sh')
-    submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name)
+    submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name, disk_space)
 
 
     # Lastly, we can execute the job submission script and send the job to the grid

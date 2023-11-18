@@ -95,7 +95,8 @@ for i in range(first_part, last_part + 1, step_size):
 
 # calculate disk space requirements
 import math
-disk_space = str(math.ceil(3 + 2.5 + .15*step_size + .025*step_size))
+disk_space = str(math.ceil(7 + .3*step_size + .05*step_size))   # fine for beam files
+#disk_space = str(10)     # typically fine as a default - good for Laser single part submissions
 
 # Submit the entire batch through multiple jobs, based on the user input (above)
 

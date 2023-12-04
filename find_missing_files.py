@@ -3,8 +3,8 @@ import os, sys
 run_number = sys.argv[1]
 
 raw_data_dir = "/pnfs/annie/persistent/raw/raw/" + run_number + "/"
-#processed_dir = "/pnfs/annie/persistent/processed/processed_hits_new_charge/R" + run_number + "/"
-processed_dir = "/pnfs/annie/scratch/users/doran/output/" + run_number + "/"
+processed_dir = "/pnfs/annie/persistent/processed/processed_hits_new_charge/R" + run_number + "/"
+#processed_dir = "/pnfs/annie/scratch/users/doran/output/" + run_number + "/"
 
 # Get the list of raw files
 raw_files = [file for file in os.listdir(raw_data_dir) if file.startswith("RAWDataR" + run_number)]

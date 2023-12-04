@@ -36,29 +36,30 @@ if exists == False:
     print('\nNo TrigOverlap tar file exists for run ' + run + ' in /pnfs/annie/persistent/processed/trigoverlap/ --- please process TrigOverlap files before submitting the jobs!\n')
     exit()
 
+# sort and find the highest numbered part file from that run (need for breaking up the jobs)
+all_files = os.listdir('/pnfs/annie/persistent/raw/raw/' + run + '/')
+all_files.sort(key=lambda file: int(file.split('p')[-1]))
+last_file = all_files[-1]
+final_part = int(last_file.split('p')[-1])
+
+print('\nThere are ' + str(final_part+1) + ' part files in this run. Proceeding with job submissions...')
+
 process_all = input('\nWould you like to submit the entire run? (y/n)   ')
 
 if process_all == 'y':
     process_all = True
-    print("\n***Note: In selecting the entire run, the part files will overlap between job submissions to account for TrigOverlap issue***\n\
-    --> For example if you specify 3 part files per job, the job submissions will be 0-2, 2-5, 5-8, etc... instead of 0-2, 3-5, 6-8, etc...\n\
-    (Just a heads up - it's part of the script, just be mindful that your jobs will contain +1 file more than you specify in the next input)\n")
 elif process_all == 'n':
     process_all = False
 else:
     print('\n### ERROR: Please type y or n ###\n')
     exit()
 
-
-# sort and find the highest numbered part file from that run (need for breaking up the jobs)
-
-all_files = os.listdir('/pnfs/annie/persistent/raw/raw/' + run + '/')
-
-all_files.sort(key=lambda file: int(file.split('p')[-1]))
-last_file = all_files[-1]
-final_part = int(last_file.split('p')[-1])
-
-print('\nThere are ' + str(final_part+1) + ' part files in this run. Proceeding with job submissions...')
+# for beam runs, we want the part files to overlap between job submissions to account for TrigOverlap issue
+# (last part file is sometimes .data format)
+overlap = input("\nInclude overlap? (y/n)     ** 'y' is recommended for beam runs **   ")
+if overlap != 'y' and overlap != 'n':
+    print('\n### ERROR: Please type y or n ###\n')
+    exit()
 
 if process_all == True:
     first_part = int(0)
@@ -82,16 +83,27 @@ if (step_size > (last_part-first_part + 1)):
 
 part_list = [[], []]     # [0] = first,  [1] = final
 for i in range(first_part, last_part + 1, step_size):
-    # to account for the trigoverlap issue (last part file is sometimes a .data format)
-    if process_all == True and i != 0:
-        part_list[0].append(i-1)
-    else:
+
+    if overlap == 'y':    # include overlap files if specified
+        if i != 0:
+            part_list[0].append(i-1)
+        else:
+            part_list[0].append(i)
+        if (i+step_size) > last_part:
+            if last_part < final_part:
+                part_list[1].append(last_part+1)
+            else:
+                part_list[1].append(final_part)
+        else:
+            part_list[1].append(i + step_size)
+            
+    elif overlap == 'n':
         part_list[0].append(i)
-        
-    if ((i+step_size-1) > last_part):    # the last job (will be smaller than the others)
-        part_list[1].append(last_part)
-    else:
-        part_list[1].append(i+step_size-1)
+        if ((i+step_size-1) > last_part):
+            part_list[1].append(last_part)
+        else:
+            part_list[1].append(i+step_size-1)
+
 
 # calculate disk space requirements
 import math

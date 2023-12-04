@@ -209,6 +209,10 @@ if missing == 'y':
         
     print('\nMaximum part bunch size = ' + str(ml))
 
+    if ml == 0:
+        print('\nNo missing files!!! aborting...\n')
+        exit()
+
 
     # Automatically assign a step size of (N) for resubmission. Loop through the missing part files,
     # if there is a group that is larger than N, ask the user if they wish to change the step size of that job

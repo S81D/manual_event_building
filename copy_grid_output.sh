@@ -20,4 +20,6 @@ echo "Copying Orphan Files..."
 echo ""
 ifdh cp $output_path/$run/Orphan* $processed_path/R$run/
 
+rm $processed_path/R$run/*.data
+
 python3 find_missing_files.py $run

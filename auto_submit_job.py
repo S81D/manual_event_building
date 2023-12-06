@@ -207,7 +207,7 @@ if missing == 'y':
         if len(missing_list[i]) > ml:
             ml = len(missing_list[i])
         
-    print('\nMaximum part bunch size = ' + str(ml))
+    print('\n### Maximum part bunch size = ' + str(ml) + '\n')
 
     if ml == 0:
         print('\nNo missing files!!! aborting...\n')
@@ -223,6 +223,16 @@ if missing == 'y':
         print('\n### ERROR: Please type y or n ###\n')
         exit()
 
+    if automatic == 'n':
+        reauto = input('\nWould you like to specify an automated step size? (y/n)    ')
+        if reauto != 'y' and reauto != 'n':
+            print('\n### ERROR: Please type y or n ###\n')
+            exit()
+
+        if reauto == 'y':
+            step_size = int(input('\nPlease specify automated step size:    '))
+            
+
     for l in range(len(missing_list)):
 
         first_part = min(missing_list[l])
@@ -230,18 +240,20 @@ if missing == 'y':
 
         if automatic == 'n':
 
-            print('\n### Part files', missing_list[l], 'are missing ###')
+            if reauto == 'n':
 
-            if len(missing_list[l]) != 1:
-                step_size = int(input('\nPlease specify how many part files per job you would like to submit for these missing files:   '))
-            else:
-                proceed_input = input("\nOnly 1 part file... proceed with submission? (type 'abort' to stop   ")
-                step_size = 1
-                if proceed_input != 'abort':
-                    print('\nproceeding...')
+                print('\n### Part files', missing_list[l], 'are missing ###')
+    
+                if len(missing_list[l]) != 1:
+                    step_size = int(input('\nPlease specify how many part files per job you would like to submit for these missing files:   '))
                 else:
-                    print('\njob submission cancelled\n')
-                    exit()
+                    proceed_input = input("\nOnly 1 part file... proceed with submission? (type 'abort' to stop)   ")
+                    step_size = 1
+                    if proceed_input != 'abort':
+                        print('\nproceeding...\n')
+                    else:
+                        print('\njob submission cancelled\n')
+                        exit()
 
 
         if automatic == 'y':
@@ -252,8 +264,9 @@ if missing == 'y':
 
 
         if (step_size > (last_part-first_part + 1)):
-            print('\n### ERROR: Stepsize larger than the number of part files selected or first part file > last part file ###\n')
-            exit()
+            print('\nStep size larger than number of missing part files... assigning step size = len(missing part files)')
+            step_size = len(missing_list[l])
+            
 
         part_list = [[], []]     # [0] = first,  [1] = final
         for i in range(first_part, last_part + 1, step_size):

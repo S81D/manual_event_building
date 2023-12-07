@@ -26,7 +26,7 @@ def submit_grid_job(run, p_start, p_end, input_path, output_path, TA_tar_name, d
     file.write('-f ${INPUT_PATH}/' + TA_tar_name + ' ')
     file.write('-f /pnfs/annie/persistent/processed/trigoverlap/R' + run + '_TrigOverlap.tar.gz ')
     file.write('-d OUTPUT $OUTPUT_FOLDER ')
-    file.write('file://${INPUT_PATH}/grid_job.sh ' + str(p_start) + '_' + str(p_end) + '\n')
+    file.write('file://${INPUT_PATH}/grid_job.sh ' + run + '_' + str(p_start) + '_' + str(p_end) + '\n')
     file.close()
 
     return

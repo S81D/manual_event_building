@@ -16,6 +16,8 @@ In addition, some ToolChains are sensitive to Daylight Savings, so ensure those 
 
 ```find_missing_files.py``` is useful for checking to see if the event building produced all of the part files. It's tedious to go through and find discrepencies when there are 100's of part files. To run it, simply specify the run number: ```python3 find_filesizes.py <RUN_NUMBER>```. After jobs have completed, use ```copy_grid_output.sh``` to copy Processed and Orphan files from your user area in /scratch to /persistent (for copying large amounts of files to /persistent, it is recommended to use ```ifdh cp```). This script will also run ```find_missing_files.py``` to tell you what part files were not successfully produced from your job submissions (and hence were not copied to /persistent). Both scripts should be in the same directory.
 
+```multi_run_auto.py``` does essentially the same as ```auto_submit_job.py``` but is designed to take a list of runs and automatically submit all of them in one go.
+
 Note that the allocated memory and disk space specified in the script may not be sufficient for varying part file submission sizes. A few jobs in the past have choked, likely from the issue of not having enough disk space or memory. The scripts currently estimate the disk space needed based on the number of part files you are submitting per job. The memory allocation requested is 4000MB. Note that some source runs (Laser in particular) contain large part files, so it may be necessary to significantly increase the disk allocation (say to 30 GB).
 
 To check on your jobs, use: ```jobsub_q -G annie --user <<username>>```

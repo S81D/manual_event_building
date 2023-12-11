@@ -217,7 +217,7 @@ if missing == 'y':
     # Automatically assign a step size of (N) for resubmission. Loop through the missing part files,
     # if there is a group that is larger than N, ask the user if they wish to change the step size of that job
 
-    auto_step_size = 7
+    auto_step_size = 3
     automatic = input('\nAutomatic submission for a step size of ' + str(auto_step_size) + '? (y/n)    ')
     if automatic != 'y' and automatic != 'n':
         print('\n### ERROR: Please type y or n ###\n')

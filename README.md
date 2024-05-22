@@ -2,6 +2,9 @@
 
 Scripts to submit jobs to the grid. Utilizes James Minock's container-within-a-container solution. Jobs rely on submitting a tar-ball of ToolAnalysis to execute a toolchain, then complete and deposit the job output to ```/pnfs/annie/scratch/users/<user>/```.
 
+An event building guide using ToolAnalysis can be found here: https://cdcvs.fnal.gov/redmine/projects/annie_experiment/wiki/Event_Building_with_ToolAnalysis
+A guide for grid submissions can be found here: https://cdcvs.fnal.gov/redmine/projects/annie_experiment/wiki/General_guideline_for_running_ANNIE_Singularity_Containers_on_Grid
+
 -----------------------
 Contains two files, ```submit_jobs.py``` and ```auto_submit_job.py```. The first contains functions that are called by the second to create three scripts to be run on the grid. ```submit_grid_job.sh``` sends the actual job and the associated files + input/output path locations. ```grid_job.sh``` is what is actually ran by the worker node, and after entering our container, ```run_container_job.sh``` is ran to execute the the ToolChains. Currently customized for EventBuilding and using the ```EventBuilder``` ToolChain, but can be adapted to any toolchain in ToolAnalysis.
 

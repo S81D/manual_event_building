@@ -318,13 +318,13 @@ if missing == 'y':
             
             # create the run_container_job and grid_job scripts
             os.system('rm ' + input_path + 'grid_job.sh')
-            submit_jobs.grid_job(run, user, input_path, TA_tar_name, name_TA)
+            submit_jobs.grid_job(run, user, input_path, TA_tar_name, name_TA, source)
             os.system('rm run_container_job.sh')
-            submit_jobs.run_container_job(run, name_TA)
+            submit_jobs.run_container_job(run, name_TA, source)
 
             # We can then create the job_submit script that will send our job (with files) to the grid
             os.system('rm submit_grid_job.sh')
-            submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name, disk_space)
+            submit_jobs.submit_grid_job(run, part_list[0][i], part_list[1][i], input_path, output_path, TA_tar_name, disk_space, source)
 
             # Lastly, we can execute the job submission script and send the job to the grid
             os.system('sh submit_grid_job.sh')

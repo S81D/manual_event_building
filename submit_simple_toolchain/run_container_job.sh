@@ -43,7 +43,7 @@ echo "" >> /srv/logfile_${ARG1}_${ARG2}.txt
 
 
 # copy any produced files to /srv for extraction
-cp *.ntuple.root /srv/ 
+cp *.csv /srv/ 
 
 # make sure any output files you want to keep are put in /srv or any subdirectory of /srv 
 

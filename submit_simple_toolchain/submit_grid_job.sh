@@ -8,9 +8,9 @@
 USERNAME=<your_gpvm_name_here>
 
 export INPUT_PATH=/pnfs/annie/scratch/users/$USERNAME/                       # working directory, things get sent to the grid from here (INPUT)
-export DATA_PATH=/pnfs/annie/persistent/processed/processed_EBV2/R4314/  # For the toolChain, ProcessedData path
+export DATA_PATH=/pnfs/annie/persistent/processed/processed_EBV2/R4314/      # For the toolChain, ProcessedData path
 
-OUTPUT_FOLDER=/pnfs/annie/scratch/users/doran/output/            # path where files from the grid will be deposited (OUTPUT)
+OUTPUT_FOLDER=/pnfs/annie/scratch/users/doran/output/                        # path where files from the grid will be deposited (OUTPUT)
 mkdir -p $OUTPUT_FOLDER     
 
 

@@ -1,5 +1,7 @@
 #!/bin/bash 
-# From James Minock 
+# Author: Steven Doran
+
+# script that executes on the grid node
 
 cat <<EOF
 condor   dir: $CONDOR_DIR_INPUT 
@@ -8,25 +10,55 @@ output   dir: $CONDOR_DIR_OUTPUT
 EOF
 
 HOSTNAME=$(hostname -f) 
-GRIDUSER="doran"            # modify
+GRIDUSER="<USERNAME>"            # modify
 
-# Create a dummy log file in the output directory
-DUMMY_OUTPUT_FILE=${CONDOR_DIR_OUTPUT}/${JOBSUBJOBID}_dummy_output 
-touch ${DUMMY_OUTPUT_FILE} 
+# Argument passed through job submission
+JOBNAME=$1
+ARG1=$2         // example arguments
+ARG2=$3
 
-# Copy datafiles from $CONDOR_INPUT onto worker node (/srv)
+
+# --------------------------------------------------------------------------
+# Create a dummy log file in the output directory to track progress / errors
+DUMMY_OUTPUT_FILE=${CONDOR_DIR_OUTPUT}/${JOBNAME}_${ARG1}_${ARG2}_${JOBSUBJOBID}_dummy_output    // JOBSUBJOBID is a long multi-digit id # for your grid job
+touch ${DUMMY_OUTPUT_FILE}
+
+# keep track of run time
+start_time=$(date +%s)   # start time in seconds 
+echo "The job started at: $(date)" >> ${DUMMY_OUTPUT_FILE}
+echo "" >> ${DUMMY_OUTPUT_FILE}
+# --------------------------------------------------------------------------
+
+
+# Copy datafiles from $CONDOR_INPUT onto worker node (the present working directory will be: /srv)
 ${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/ProcessedRawData* . 
 ${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/MyToolAnalysis_grid.tar.gz . 
-${JSB_TMP}/ifdh.sh cp -D $CONDOR_DIR_INPUT/my_inputs.txt . 
 
-# un-tar TA
+# un-tar Toolanalysis
 tar -xzf MyToolAnalysis_grid.tar.gz    
 rm MyToolAnalysis_grid.tar.gz
 
-# Setup singularity container 
-singularity exec -B/srv:/srv /cvmfs/singularity.opensciencegrid.org/anniesoft/toolanalysis\:latest/ $CONDOR_DIR_INPUT/run_container_job.sh 
+
+# often times you will need to create a list file for the toolchain, containing the data files you have attached 
+FILES_PRESENT=$(ls /srv/Processed* 2>/dev/null | wc -l)
+echo "*** There are $FILES_PRESENT files here ***" >> ${DUMMY_OUTPUT_FILE}
+ls -v /srv/Processed* >> my_inputs.txt     # create my_inputs.txt for toolchain
+
+
+
+# --------------------------------------------------------------------------
+# this fixes a weird bug by making sure everything is bind mounted correctly - leave this in
+echo "Make sure singularity is bind mounting correctly (ls /cvmfs/singularity)" >> ${DUMMY_OUTPUT_FILE}
+ls /cvmfs/singularity.opensciencegrid.org >> ${DUMMY_OUTPUT_FILE}
+# --------------------------------------------------------------------------
+
+
+
+# Setup singularity container and execute the run_container script (pass any args to the next script)
+singularity exec -B/srv:/srv /cvmfs/singularity.opensciencegrid.org/anniesoft/toolanalysis\:latest/ $CONDOR_DIR_INPUT/run_container_job.sh $ARG1 $ARG2
 
 # ------ The script run_container_job.sh will now run within singularity ------ #
+
 
 
 # cleanup and move files to $CONDOR_OUTPUT after leaving singularity environment

@@ -28,7 +28,8 @@ echo ""
     # - ToolAnalysis tar-ball
     # - Processed or RAW data files that are needed to run the toolchain
 # -d is the output directory where completed/processed files from your grid job will be deposited on the anniegpvms
-# Lastly, file://.... is the actual job script that will execute on the worker node.
+# file://.... is the actual job script that will execute on the worker node.
+# Lastly, you may want to pass arguments to your grid scripts. You can append those at the end of the wrapper script.
 
 jobsub_submit \
   --memory=2000MB \                                                // allocated memory - almost always you are fine with 2GB - sometimes you may need 4GB but test first
@@ -42,7 +43,9 @@ jobsub_submit \
   -f ${INPUT_PATH}/run_container_job.sh \                          // script that executes within the container
   -f ${INPUT_PATH}/MyToolAnalysis_grid.tar.gz \                    // ToolAnalysis tarball
   -d OUTPUT $OUTPUT_FOLDER \                                       // once job is done, files will be deposited here
-  file://${INPUT_PATH}/grid_job.sh                                 // job script that will execute first on the grid node
+  file://${INPUT_PATH}/grid_job.sh \                               // job script that will execute first on the grid node
+  jobname arg1 arg2 arg3                                           // arguments to be passed to the grid script
+                                  
 
 
 

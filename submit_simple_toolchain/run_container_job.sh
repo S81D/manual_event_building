@@ -30,7 +30,7 @@ echo "Running Toolchain..." >> /srv/logfile_${ARG1}_${ARG2}.txt
 echo "" >> /srv/logfile_${ARG1}_${ARG2}.txt 
 
 # Run the toolchain, and output verbose to log file 
-./Analyse configfiles/PrintDQ/ToolChainConfig >> /srv/logfile_${ARG1}_${ARG2}.txt  
+./Analyse configfiles/PrintDQ/ToolChainConfig >> /srv/logfile_${ARG1}_${ARG2}.txt 2>&1   # re-direct all stderr messages to this logfile
 
 
 # ------------------------------------------

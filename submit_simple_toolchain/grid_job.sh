@@ -64,8 +64,9 @@ singularity exec -B/srv:/srv /cvmfs/singularity.opensciencegrid.org/anniesoft/to
 # cleanup and move files to $CONDOR_OUTPUT after leaving singularity environment
 echo "Moving the output files to CONDOR OUTPUT..." >> ${DUMMY_OUTPUT_FILE} 
 ${JSB_TMP}/ifdh.sh cp -D /srv/logfile* $CONDOR_DIR_OUTPUT         # log files
-${JSB_TMP}/ifdh.sh cp -D /srv/*.ntuple.root $CONDOR_DIR_OUTPUT    # Modify: any .root files etc.. that are produced from your toolchain
+${JSB_TMP}/ifdh.sh cp -D /srv/*.csv $CONDOR_DIR_OUTPUT            # Modify: any .root files etc.. that are produced from your toolchain
 
+# --------------------------------------------------------------------------
 echo "" >> ${DUMMY_OUTPUT_FILE} 
 echo "Input:" >> ${DUMMY_OUTPUT_FILE} 
 ls $CONDOR_DIR_INPUT >> ${DUMMY_OUTPUT_FILE} 
@@ -75,12 +76,27 @@ ls $CONDOR_DIR_OUTPUT >> ${DUMMY_OUTPUT_FILE}
 
 echo "" >> ${DUMMY_OUTPUT_FILE} 
 echo "Cleaning up..." >> ${DUMMY_OUTPUT_FILE} 
-echo "srv directory:" >> ${DUMMY_OUTPUT_FILE} 
-ls -v /srv >> ${DUMMY_OUTPUT_FILE} 
+echo "" >> ${DUMMY_OUTPUT_FILE} 
+# --------------------------------------------------------------------------
 
-# make sure to clean up the files left on the worker node
-rm /srv/ProcessedRawData* 
-rm /srv/my_inputs.txt 
-rm -rf MyToolAnalysis_2_26_23/ 
+# make sure to be a RESPONSIBLE fermilab user and clean up after yourself! (clean up the files left on the worker node)
+rm /srv/Processed* 
+rm /srv/*.txt 
+rm /srv/*.csv
+rm /srv/*.sh
+rm -rf /srv/ToolAnalysis/ 
+
+# --------------------------------------------------------------------------
+echo "remaining files in srv directory:" >> ${DUMMY_OUTPUT_FILE} 
+ls -v /srv >> ${DUMMY_OUTPUT_FILE} 
+echo "" >> ${DUMMY_OUTPUT_FILE} 
+
+# log the run time
+end_time=$(date +%s)
+echo "Job ended at: $(date)" >> ${DUMMY_OUTPUT_FILE}
+echo "" >> ${DUMMY_OUTPUT_FILE}
+duration=$((end_time - start_time))
+echo "Script duration (s): ${duration}" >> ${DUMMY_OUTPUT_FILE}
+# --------------------------------------------------------------------------
 
 ### END ###
